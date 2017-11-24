@@ -8,7 +8,7 @@ import com.sravs.auth.util.BCrypt;
 import com.sravs.auth.util.AuthUtil;
 import com.sravs.auth.util.Converter;
 import com.sravs.common.db.Model;
-import com.sravs.common.exception.AuthApplicationException;
+import com.sravs.common.exception.ApplicationException;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -53,7 +53,7 @@ public class AuthBusiness implements IAuthBusiness {
         }
 
         if (!registeredUser) {
-            throw new AuthApplicationException("Not a valid login. try again");
+            throw new ApplicationException("Not a valid login. try again");
         } else {
 
             HttpSession session = request.getSession();
@@ -70,10 +70,10 @@ public class AuthBusiness implements IAuthBusiness {
             if (Objects.equals(id, userId)) {
                 authUtil.invalidateSession(request, response);
             } else {
-                throw new AuthApplicationException("Hack alert");
+                throw new ApplicationException("Hack alert");
             }
         }
-        throw new AuthApplicationException("User is not logged in").setData(id);
+        throw new ApplicationException("User is not logged in").setData(id);
     }
 
     @Override

@@ -35,7 +35,7 @@ dependencies {
 
     compile 'org.hibernate:hibernate-core:5.2.2.Final'
     compile "mysql:mysql-connector-java:${mysqlConnectorVersion}"
-    compile 'com.sravs.common:common:1.0.0'
+    compile 'com.sravs.common:common:1.0.1'
 }
 
 

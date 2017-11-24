@@ -7,7 +7,7 @@ import com.sravs.auth.response.UserDto;
 import com.sravs.auth.util.BCrypt;
 import com.sravs.auth.util.Converter;
 import com.sravs.common.db.Model;
-import com.sravs.common.exception.AuthApplicationException;
+import com.sravs.common.exception.ApplicationException;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -30,15 +30,15 @@ public class UserBusiness implements IUserBusiness {
         String username = request.getUsername();
         String password = request.getPassword();
         if (username == null || password == null) {
-            throw new AuthApplicationException("Invalid username password").setStatus(Response.Status.BAD_REQUEST);
+            throw new ApplicationException("Invalid username password").setStatus(Response.Status.BAD_REQUEST);
         }
 
         if (username.length() < 6) {
-            throw new AuthApplicationException("Minimum username length is 6").setStatus(Response.Status.BAD_REQUEST);
+            throw new ApplicationException("Minimum username length is 6").setStatus(Response.Status.BAD_REQUEST);
         }
 
         if (password.length() < 6) {
-            throw new AuthApplicationException("Minimum password length is 6").setStatus(Response.Status.BAD_REQUEST);
+            throw new ApplicationException("Minimum password length is 6").setStatus(Response.Status.BAD_REQUEST);
         }
 
         String salt = BCrypt.gensalt();
@@ -80,7 +80,7 @@ public class UserBusiness implements IUserBusiness {
     private User getUserForId(Integer id) {
         User user = userDao.find(id);
         if (user == null) {
-            throw new AuthApplicationException("No user found for given id").setData(id);
+            throw new ApplicationException("No user found for given id").setData(id);
         }
         return user;
     }
