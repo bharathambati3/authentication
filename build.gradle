@@ -1,0 +1,80 @@
+apply plugin : 'java'
+apply plugin : 'war'
+apply plugin: 'com.bmuschko.cargo'
+apply plugin: 'com.bmuschko.cargo-base'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-cargo-plugin:2.2.2'
+    }
+}
+
+repositories {
+    jcenter()
+    maven { url "http://localhost:8081/artifactory/libs-release-local" }
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+
+    providedCompile 'javax:javaee-api:7.0'
+
+    providedCompile "org.jboss.resteasy:resteasy-jaxrs:${restEasyVersion}"
+    providedCompile "org.jboss.resteasy:resteasy-jaxb-provider:${restEasyVersion}"
+    providedCompile "org.jboss.resteasy:resteasy-client:${restEasyVersion}"
+    providedCompile "org.jboss.resteasy:resteasy-jackson-provider:${restEasyVersion}"
+
+    cargo "org.codehaus.cargo:cargo-ant:1.4.18"
+    cargo "org.codehaus.cargo:cargo-core-uberjar:1.4.18"
+    cargo "org.codehaus.cargo:cargo-core-container-wildfly:1.4.18"
+    cargo "org.wildfly:wildfly-controller-client:8.2.0.Final"
+
+    compile 'org.hibernate:hibernate-core:5.2.2.Final'
+    compile "mysql:mysql-connector-java:${mysqlConnectorVersion}"
+    compile 'com.sravs.common:common:1.0.0'
+}
+
+
+cargo {
+
+    containerId = 'wildfly9x'
+}
+
+
+task setupCargo {
+
+    doFirst {
+        cargo {
+            remote {
+                hostname = "localhost"
+                username = "admin"
+                password = "admin"
+            }
+        }
+    }
+}
+
+
+/**
+ * A custom task to deploy to local server
+ */
+task deploy(
+        type: com.bmuschko.gradle.cargo.tasks.remote.CargoRedeployRemote,
+        dependsOn: ['war', 'setupCargo'])
+
+/**
+ * Will redeploy the application and then run the tests
+ */
+task runMyTests(type: org.gradle.api.tasks.testing.Test,
+        dependsOn: ['cleanTest', 'deployToLocalServer'])
+
+/**
+ * Will repeat tests without redeploying the web application
+ */
+task repeatTests(type: org.gradle.api.tasks.testing.Test,
+        dependsOn: ['cleanTest'])
+
